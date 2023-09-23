@@ -3,6 +3,7 @@
 Applicable to react 18
 
 ## State mgmt
+
 keep it simple and clean.
 
 ```js
@@ -17,10 +18,11 @@ function SomeComponent() {
   const [msg, setMsg] = useState('')
 }
 ```
+
 ### setState
 
 ```js
-const someHandler = (e) => {
+const someHandler = e => {
   setUser({
     ...user,
     userName: e.target.value
@@ -29,9 +31,11 @@ const someHandler = (e) => {
   setMsg(e.target.value)
 }
 ```
+
 updater function setState (when depends on previous state)
+
 ```js
-setUser((prevState) => ({
+setUser(prevState => ({
   ...prevState,
   userSalary: userName.length * 500
 }));
@@ -41,8 +45,11 @@ setMsg(msg => `${msg}?`)
 setMsg(msg => `${msg}...`)
 // msg!?...
 ```
+
 ### context API
+
 to share state between components.
+
 1. Create context in parent
 2. Wrap children with `<UserContext.Provider value={user}>`
 3. `useState` works in parent component
@@ -57,7 +64,7 @@ const UserContext = createContext({
 
 function SomeComponent() {
   // Get the state
-  const { userName, userId } = useContext(UserContext);
+  const { userName, userId } = useContext(UserContext)
   //...
 }
 
@@ -74,20 +81,21 @@ function App() {
     </UserContext.Provider>
   )
 }
-
 ```
+
 Separate dispatch and state contexts and make custom provider for both
+
 ```js
 // Provider.js
-import { createContext, useContext, useReducer } from 'react';
+import { createContext, useContext, useReducer } from 'react'
 
-const SomeContext = createContext(null);
-const SomeDispatchContext = createContext(null);
+const SomeContext = createContext(null)
+const SomeDispatchContext = createContext(null)
 
 export function SomeProvider({ children }) {
   const [tasks, dispatch] = useReducer(
     tasksReducer,
-    [ { id: 0, text: 'Find Graal', done: true } ] // initial
+    [{ id: 0, text: "Find Graal", done: true }] // initial
   );
 
   return (
@@ -109,16 +117,19 @@ export function useTasksDispatch() {
 
 function tasksReducer(tasks, action) {
   switch (action.type) {
-    case 'added': {
-      return [...tasks, {
-        id: action.id,
-        text: action.text,
-        done: false
-      }];
+    case "added": {
+      return [
+        ...tasks,
+        {
+          id: action.id,
+          text: action.text,
+          done: false
+        }
+      ]
     }
     //...
     default: {
-      throw Error('Unknown action: ' + action.type);
+      throw Error('Unknown action: ' + action.type)
     }
   }
 }
@@ -147,25 +158,28 @@ export default function AddTask() {
   const tasks = useTasks()
   return (
     <>
-      <input
-        value={text}
-        onChange={e => setText(e.target.value)}
-      />
-      <button onClick={() => {
-        dispatch({
-          type: 'added',
-          id: tasks.length + 1,
-          text: text
-        })
-        setText('')
-      }}>Add</button>
+      <input value={text} onChange={e => setText(e.target.value)} />
+      <button
+        onClick={() => {
+          dispatch({
+            type: "added",
+            id: tasks.length + 1,
+            text: text
+          })
+          setText("")
+        }}
+      >
+        Add
+      </button>
     </>
   )
 }
-
 ```
+
 ### useReducer
+
 useReducer hook allows to consolidate all the state update logic outside your component in a single function, called a reducer
+
 ```js
 import { useReducer } from 'react'
 
@@ -199,8 +213,45 @@ function tasksReducer(tasks, action) {
   }
 }
 ```
-### Redux TK
-Store + useReducer
-```
 
+### Redux TK
+
+Store + useReducer
+
+```js
+import { useReducer } from 'react'
+import { createStore } from 'redux'
+
+const store = createStore(reducer) // move to src/store
+
+function reducer(tasks, action) {
+  switch (action.type) {
+    case "added":
+      return [
+        ...tasks,
+        {
+          id: action.id,
+          text: action.text,
+          done: false
+        }
+      ]
+    // ...
+    default:
+      return tasks;
+  }
+}
+
+function App() {
+  const [tasks, dispatch] = useReducer(reducer, store.getState())
+
+  const handleAddTask = text => {
+    dispatch({
+      type: 'added',
+      id: nextId++,
+      text: text
+    })
+  }
+
+  // ...
+}
 ```
