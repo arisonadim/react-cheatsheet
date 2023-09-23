@@ -133,7 +133,8 @@ function tasksReducer(tasks, action) {
     }
   }
 }
-
+```
+```js
 // App.js
 import AddTask from './AddTask.js'
 import TaskList from './TaskList.js'
@@ -147,8 +148,9 @@ export default function App() {
     </SomeProvider>
   );
 }
-
-//AddTask
+```
+```js
+//AddTask.js
 import { useState } from 'react'
 import { useTasksDispatch, useTasks } from './Provider.js'
 
@@ -223,6 +225,7 @@ import { useReducer } from 'react'
 import { createStore } from 'redux'
 
 const store = createStore(reducer) // move to src/store
+// use <Provider store={store}> in root component
 
 function reducer(tasks, action) {
   switch (action.type) {
@@ -253,5 +256,76 @@ function App() {
   }
 
   // ...
+}
+```
+Redux toolkit minimalistic approach. Actions will be generated automaticaly
+```js
+// store.js
+import { configureStore } from '@reduxjs/toolkit'
+import taskReducer from './taskSlice'
+
+export const store = configureStore({
+  reducer: {
+    task: taskReducer,
+  }
+})
+```
+```js
+// App.js
+// ...
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </React.StrictMode>
+)
+```
+```js
+// taskSlice.js
+import { createSlice } from '@reduxjs/tooklit'
+
+const initialTasks = [
+  { id: 0, text: "Find Graal", done: true }
+]
+
+export const taskSlice = createSlice({
+  name: 'tasks',
+  initialTasks,
+  reducers: {
+    addTask: (state, action) => {
+      state.tasks = [...state.tasks, action.payload]
+    }
+  }
+})
+
+export const { addTask } = taskSlice.actions
+
+export default taskSlice.reducer
+```
+```js
+// App.js
+function App() {
+
+  const tasks = useSelector(state => state.tasks)
+  const dispatch = useDispatch()
+
+  return (
+    <>
+      { tasks.map(task => (
+        <div key={task.id}>{task.name}</div>
+      ))}
+      <button
+        onClick={() =>
+          dispatch(addTask({
+            id: tasks.length + 1,
+            text: 'some text'
+          }))
+        }
+      >
+        Add
+      </button>
+    </>
+  )
 }
 ```
