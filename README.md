@@ -96,15 +96,15 @@ export function SomeProvider({ children }) {
         {children}
       </SomeDispatchContext.Provider>
     </SomeContext.Provider>
-  );
+  )
 }
 
 export function useTasks() {
-  return useContext(SomeContext);
+  return useContext(SomeContext)
 }
 
 export function useTasksDispatch() {
-  return useContext(SomeDispatchContext);
+  return useContext(SomeDispatchContext)
 }
 
 function tasksReducer(tasks, action) {
@@ -160,24 +160,24 @@ export default function AddTask() {
         setText('')
       }}>Add</button>
     </>
-  );
+  )
 }
 
 ```
 ### useReducer
 useReducer hook allows to consolidate all the state update logic outside your component in a single function, called a reducer
 ```js
-import { useReducer } from 'react';
+import { useReducer } from 'react'
 
-const [tasks, dispatch] = useReducer(tasksReducer, initialTasks);
+const [tasks, dispatch] = useReducer(tasksReducer, initialTasks)
 
 function handleAddTask(text) {
   dispatch({
     // "action" object:
     type: 'added', // what happened
     id: nextId++, // other fields
-    text: text,
-  });
+    text: text
+  })
 }
 
 function tasksReducer(tasks, action) {
@@ -188,13 +188,13 @@ function tasksReducer(tasks, action) {
         {
           id: action.id,
           text: action.text,
-          done: false,
-        },
-      ];
+          done: false
+        }
+      ]
     }
     //..
     default: {
-      throw Error('Unknown action: ' + action.type);
+      throw Error('Unknown action: ' + action.type)
     }
   }
 }
